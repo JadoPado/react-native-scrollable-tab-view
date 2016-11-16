@@ -40,6 +40,7 @@ const ScrollableTabView = React.createClass({
     scrollWithoutAnimation: PropTypes.bool,
     locked: PropTypes.bool,
     prerenderingSiblingsNumber: PropTypes.number,
+    isRTL: PropTypes.bool,
   },
 
   getDefaultProps() {
@@ -53,6 +54,7 @@ const ScrollableTabView = React.createClass({
       scrollWithoutAnimation: false,
       locked: false,
       prerenderingSiblingsNumber: 0,
+      isRTL: false,
     };
   },
 
@@ -79,11 +81,11 @@ const ScrollableTabView = React.createClass({
     if (Platform.OS === 'ios') {
       const offset = pageNumber * this.state.containerWidth;
       if (this.scrollView) {
-        this.scrollView.scrollTo({x: offset, y: 0, animated: !this.props.scrollWithoutAnimation, });
+        this.scrollView.scrollTo({x: this.props.isRTL ? -offset : offset, y: 0, animated: !this.props.scrollWithoutAnimation, });
       }
     } else {
       if (this.scrollView) {
-        if (this.props.scrollWithoutAnimation) {
+        if (this.props.scrollWithoutAnimation || this.props.isRTL) {
           this.scrollView.setPageWithoutAnimation(pageNumber);
         } else {
           this.scrollView.setPage(pageNumber);
@@ -201,7 +203,8 @@ const ScrollableTabView = React.createClass({
 
   _onMomentumScrollBeginAndEnd(e) {
     const offsetX = e.nativeEvent.contentOffset.x;
-    const page = Math.round(offsetX / this.state.containerWidth);
+    let page = Math.round(offsetX / this.state.containerWidth);
+    page = this.props.isRTL ? -page : page;
     if (this.state.currentPage !== page) {
       this._updateSelectedPage(page);
     }
