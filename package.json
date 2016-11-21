@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/brentvatne/react-native-scrollable-tab-view#readme",
   "dependencies": {
+    "react-native-invertible-scroll-view": "github:JadoPado/react-native-invertible-scroll-view#v1.0.1-jp",
     "react-static-container": "^1.0.1",
     "react-timer-mixin": "^0.13.3"
   },

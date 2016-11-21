@@ -9,17 +9,15 @@ const {
   View,
   Animated,
   ScrollView,
-  Platform,
   StyleSheet,
-  ViewPagerAndroid,
   InteractionManager,
 } = ReactNative;
 const TimerMixin = require('react-timer-mixin');
+const InvertibleScrollView = require('react-native-invertible-scroll-view');
 
 const SceneComponent = require('./SceneComponent');
 const DefaultTabBar = require('./DefaultTabBar');
 const ScrollableTabBar = require('./ScrollableTabBar');
-
 
 const ScrollableTabView = React.createClass({
   mixins: [TimerMixin, ],
@@ -78,19 +76,9 @@ const ScrollableTabView = React.createClass({
   },
 
   goToPage(pageNumber) {
-    if (Platform.OS === 'ios') {
-      const offset = pageNumber * this.state.containerWidth;
-      if (this.scrollView) {
-        this.scrollView.scrollTo({x: this.props.isRTL ? -offset : offset, y: 0, animated: !this.props.scrollWithoutAnimation, });
-      }
-    } else {
-      if (this.scrollView) {
-        if (this.props.scrollWithoutAnimation || this.props.isRTL) {
-          this.scrollView.setPageWithoutAnimation(pageNumber);
-        } else {
-          this.scrollView.setPage(pageNumber);
-        }
-      }
+    const offset = pageNumber * this.state.containerWidth;
+    if (this.scrollView) {
+      this.scrollView.scrollTo({x: this.props.isRTL ? -offset : offset, y: 0, animated: !this.props.scrollWithoutAnimation, });
     }
 
     const currentPage = this.state.currentPage;
@@ -142,50 +130,30 @@ const ScrollableTabView = React.createClass({
   },
 
   renderScrollableContent() {
-    if (Platform.OS === 'ios') {
-      const scenes = this._composeScenes();
-      return <ScrollView
-        horizontal
-        pagingEnabled
-        automaticallyAdjustContentInsets={false}
-        contentOffset={{ x: this.props.initialPage * this.state.containerWidth, }}
-        ref={(scrollView) => { this.scrollView = scrollView; }}
-        onScroll={(e) => {
-          const offsetX = e.nativeEvent.contentOffset.x;
-          this._updateScrollValue(offsetX / this.state.containerWidth);
-        }}
-        onMomentumScrollBegin={this._onMomentumScrollBeginAndEnd}
-        onMomentumScrollEnd={this._onMomentumScrollBeginAndEnd}
-        scrollEventThrottle={16}
-        scrollsToTop={false}
-        showsHorizontalScrollIndicator={false}
-        scrollEnabled={!this.props.locked}
-        directionalLockEnabled
-        alwaysBounceVertical={false}
-        keyboardDismissMode="on-drag"
-        {...this.props.contentProps}
-      >
-          {scenes}
-      </ScrollView>;
-    } else {
-      const scenes = this._composeScenes();
-      return <ViewPagerAndroid
-        key={this._children().length}
-        style={styles.scrollableContentAndroid}
-        initialPage={this.props.initialPage}
-        onPageSelected={this._updateSelectedPage}
-        keyboardDismissMode="on-drag"
-        scrollEnabled={!this.props.locked}
-        onPageScroll={(e) => {
-          const { offset, position, } = e.nativeEvent;
-          this._updateScrollValue(position + offset);
-        }}
-        ref={(scrollView) => { this.scrollView = scrollView; }}
-        {...this.props.contentProps}
-      >
+    const scenes = this._composeScenes();
+    return <InvertibleScrollView
+      horizontal
+      pagingEnabled
+      automaticallyAdjustContentInsets={false}
+      contentOffset={{ x: this.props.initialPage * this.state.containerWidth, }}
+      ref={(scrollView) => { this.scrollView = scrollView; }}
+      onScroll={(e) => {
+        const offsetX = e.nativeEvent.contentOffset.x;
+        this._updateScrollValue(offsetX / this.state.containerWidth);
+      }}
+      onMomentumScrollBegin={this._onMomentumScrollBeginAndEnd}
+      onMomentumScrollEnd={this._onMomentumScrollBeginAndEnd}
+      scrollEventThrottle={16}
+      scrollsToTop={false}
+      showsHorizontalScrollIndicator={false}
+      scrollEnabled={!this.props.locked}
+      directionalLockEnabled
+      alwaysBounceVertical={false}
+      keyboardDismissMode="on-drag"
+      {...this.props.contentProps}
+    >
         {scenes}
-      </ViewPagerAndroid>;
-    }
+    </InvertibleScrollView>;
   },
 
   _composeScenes() {
