@@ -1,6 +1,6 @@
 {
   "name": "react-native-scrollable-tab-view",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/brentvatne/react-native-scrollable-tab-view#readme",
   "dependencies": {
-    "react-native-invertible-scroll-view": "github:JadoPado/react-native-invertible-scroll-view#v1.0.1-jp",
+    "react-native-invertible-scroll-view": "github:JadoPado/react-native-invertible-scroll-view#v1.0.2-jp",
     "react-static-container": "^1.0.1",
     "react-timer-mixin": "^0.13.3"
   },
